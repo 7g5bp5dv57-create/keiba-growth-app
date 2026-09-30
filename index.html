@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#111827">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="競馬データ成長アプリ">
+<link rel="manifest" href="manifest.json">
+<title>競馬データ成長アプリ</title>
+<style>
+:root{font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif;color:#111827;background:#f3f4f6}
+*{box-sizing:border-box} body{margin:0;padding:0 0 90px}
+header{position:sticky;top:0;z-index:5;background:#111827;color:#fff;padding:14px 16px}
+header h1{font-size:18px;margin:0 0 4px} header small{opacity:.75}
+main{max-width:760px;margin:auto;padding:12px}
+.card{background:#fff;border-radius:16px;padding:14px;margin:10px 0;box-shadow:0 2px 10px #0000000b}
+h2{font-size:16px;margin:0 0 10px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+label{font-size:12px;color:#6b7280;display:block;margin-bottom:4px}
+input,select,button{font:inherit} input,select{width:100%;padding:10px;border:1px solid #d1d5db;border-radius:10px;background:#fff}
+button{border:0;border-radius:11px;padding:11px 14px;font-weight:700;background:#111827;color:white}
+button.secondary{background:#e5e7eb;color:#111827}.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.tablewrap{overflow:auto} table{width:100%;border-collapse:collapse;min-width:520px} th,td{padding:8px;border-bottom:1px solid #e5e7eb;text-align:right;font-size:13px} th:first-child,td:first-child{text-align:center}
+.badge{display:inline-block;padding:3px 7px;border-radius:999px;font-size:11px;background:#fee2e2;color:#991b1b;font-weight:700}.ok{background:#dcfce7;color:#166534}
+.highlight{background:#fff7ed}.muted{color:#6b7280;font-size:12px}
+.stat{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.stat>div{background:#f9fafb;border-radius:12px;padding:10px;text-align:center}.stat b{display:block;font-size:20px}
+.nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #ddd;padding:8px;display:flex;justify-content:center;gap:8px;z-index:10}
+.nav button{flex:1;max-width:240px}.hidden{display:none}
+</style>
+</head>
+<body>
+<header><h1>🏇 競馬データ成長アプリ</h1><small>第1版：馬単オッズ段差を蓄積・検証</small></header>
+<div id="installNote" style="display:none;margin:10px 12px;padding:12px;border-radius:12px;background:#fff7ed;color:#9a3412;font-size:13px;">Safariで開いたら「共有」→「ホーム画面に追加」で、iPhoneのホーム画面から起動できます。</div>
+<main>
+<section id="entry">
+<div class="card">
+<h2>① レース情報</h2>
+<div class="grid">
+<div><label>日付</label><input id="date" type="date"></div>
+<div><label>競馬場</label><input id="track" placeholder="中山"></div>
+<div><label>R</label><input id="race" type="number" min="1" max="12" placeholder="11"></div>
+<div><label>距離(m)</label><input id="distance" type="number" placeholder="1200"></div>
+<div><label>芝/ダート</label><select id="surface"><option>芝</option><option>ダート</option></select></div>
+<div><label>馬場</label><select id="going"><option>良</option><option>稍重</option><option>重</option><option>不良</option></select></div>
+</div>
+</div>
+
+<div class="card">
+<h2>② 1番人気</h2>
+<div><label>馬番</label><input id="fav" type="number" min="1" max="18" placeholder="9"></div>
+<p class="muted">各馬について「1番人気→相手」と「相手→1番人気」の馬単オッズを入力します。</p>
+</div>
+
+<div class="card">
+<h2>③ 馬単オッズ</h2>
+<div class="row">
+<button onclick="addRow()">＋ 馬を追加</button>
+<button class="secondary" onclick="loadExample()">例を入れる</button>
+<button class="secondary" onclick="clearRows()">クリア</button>
+</div>
+<div class="tablewrap" style="margin-top:10px">
+<table><thead><tr><th>馬番</th><th>1番人気→相手</th><th>相手→1番人気</th><th>差</th><th>順</th><th>前との差</th><th>判定</th></tr></thead>
+<tbody id="rows"></tbody></table>
+</div>
+</div>
+
+<div class="card">
+<h2>④ 結果</h2>
+<div class="grid">
+<div><label>1着</label><input id="p1" type="number"></div>
+<div><label>2着</label><input id="p2" type="number"></div>
+<div><label>3着</label><input id="p3" type="number"></div>
+</div>
+<p class="muted">保存すると、各ライン（3/5/7/10/12/15/20/30）の成績に反映します。</p>
+<button onclick="saveRace()">このレースを保存</button>
+</div>
+</section>
+
+<section id="stats" class="hidden">
+<div class="card">
+<h2>📊 蓄積データ</h2>
+<div class="stat">
+<div><b id="raceCount">0</b><span class="muted">保存レース</span></div>
+<div><b id="candidateCount">0</b><span class="muted">ライン候補</span></div>
+<div><b id="hitCount">0</b><span class="muted">3着以内</span></div>
+</div>
+</div>
+<div class="card">
+<h2>ライン別検証</h2>
+<div class="tablewrap"><table><thead><tr><th>基準</th><th>候補数</th><th>1着</th><th>2着</th><th>3着</th><th>3着内率</th></tr></thead><tbody id="statsRows"></tbody></table></div>
+</div>
+<div class="card">
+<h2>保存データ</h2>
+<div id="history" class="muted">まだありません。</div>
+<button class="secondary" onclick="exportData()" style="margin-top:10px">JSONを書き出す</button>
+<button class="secondary" onclick="resetData()" style="margin-top:10px">全データ削除</button>
+</div>
+</section>
+</main>
+<div class="nav">
+<button onclick="show('entry')">入力</button>
+<button onclick="show('stats');renderStats()">分析</button>
+</div>
+
+<script>
+const thresholds=[3,5,7,10,12,15,20,30];
+const $=id=>document.getElementById(id);
+let data=JSON.parse(localStorage.getItem('keibaGrowthData')||'[]');
+
+function addRow(v={}) {
+  const tr=document.createElement('tr');
+  tr.innerHTML=`<td><input class="horse" type="number" min="1" max="18" value="${v.horse??''}"></td>
+  <td><input class="a" type="number" step="0.1" value="${v.a??''}"></td>
+  <td><input class="b" type="number" step="0.1" value="${v.b??''}"></td>
+  <td class="diff">-</td><td class="rank">-</td><td class="gap">-</td><td class="flag">-</td>`;
+  $('rows').appendChild(tr);
+  tr.querySelectorAll('input').forEach(x=>x.addEventListener('input',calc));
+  calc();
+}
+function clearRows(){ $('rows').innerHTML=''; calc(); }
+function loadExample(){
+  clearRows();
+  $('fav').value=9;
+  [[13,16.4,20.2],[15,27.7,40],[11,32.8,57.8],[6,40,67.3],[3,49.7,108.4],[5,77.4,143],[16,89.3,168.3],[4,94.7,178.8]]
+  .forEach(x=>addRow({horse:x[0],a:x[1],b:x[2]}));
+}
+function getRows(){
+  return [...document.querySelectorAll('#rows tr')].map(tr=>{
+    const horse=+tr.querySelector('.horse').value,a=+tr.querySelector('.a').value,b=+tr.querySelector('.b').value;
+    return {horse,a,b,diff:Number.isFinite(a)&&Number.isFinite(b)?Math.abs(b-a):null,tr};
+  }).filter(x=>x.horse&&x.diff!==null);
+}
+function calc(){
+  const rs=getRows().sort((x,y)=>x.diff-y.diff);
+  const by=new Map(rs.map((x,i)=>[x.tr,i]));
+  rs.forEach((x,i)=>{
+    const gap=i?x.diff-rs[i-1].diff:null;
+    x.tr.querySelector('.diff').textContent=x.diff.toFixed(1);
+    x.tr.querySelector('.rank').textContent=i+1;
+    x.tr.querySelector('.gap').textContent=gap===null?'-':gap.toFixed(1);
+    const line=gap!==null && gap>=10;
+    x.tr.querySelector('.flag').innerHTML=line?'<span class="badge">小さい側</span>':'';
+    x.tr.className=line?'highlight':'';
+  });
+}
+function getCandidates(){
+  const rs=getRows().sort((x,y)=>x.diff-y.diff);
+  const out=[];
+  rs.forEach((x,i)=>{if(i&&x.diff-rs[i-1].diff>=10) out.push({horse:rs[i-1].horse,gap:x.diff-rs[i-1].diff,small:rs[i-1].diff});});
+  return out;
+}
+function saveRace(){
+  const rows=getRows();
+  if(!$('fav').value||rows.length<2||!$('p1').value||!$('p2').value||!$('p3').value){alert('1番人気・馬単オッズ・1〜3着を入力してください');return;}
+  const race={date:$('date').value,track:$('track').value,race:+$('race').value,distance:+$('distance').value,surface:$('surface').value,going:$('going').value,fav:+$('fav').value,rows:rows.map(({tr,...r})=>r),candidates:getCandidates(),p:[+$('p1').value,+$('p2').value,+$('p3').value],savedAt:new Date().toISOString()};
+  data.push(race);localStorage.setItem('keibaGrowthData',JSON.stringify(data));
+  alert('保存しました。分析画面で成績を確認できます。');
+  $('p1').value=$('p2').value=$('p3').value='';
+}
+function show(which){$('entry').classList.toggle('hidden',which!=='entry');$('stats').classList.toggle('hidden',which!=='stats');if(which==='stats')renderStats();}
+function renderStats(){
+  const all=data.flatMap(r=>r.candidates.map(c=>({...c,p:r.p, race:r})));
+  $('raceCount').textContent=data.length;
+  $('candidateCount').textContent=all.length;
+  $('hitCount').textContent=all.filter(x=>x.p.includes(x.horse)).length;
+  $('statsRows').innerHTML=thresholds.map(t=>{
+    const xs=all.filter(x=>x.gap>=t), c=xs.length;
+    const p1=xs.filter(x=>x.p[0]===x.horse).length,p2=xs.filter(x=>x.p[1]===x.horse).length,p3=xs.filter(x=>x.p[2]===x.horse).length;
+    return `<tr><td>${t}以上</td><td>${c}</td><td>${p1}</td><td>${p2}</td><td>${p3}</td><td>${c?((p1+p2+p3)/c*100).toFixed(1):'-'}%</td></tr>`;
+  }).join('');
+  $('history').innerHTML=data.length?data.slice().reverse().map((r,i)=>`<div style="padding:8px 0;border-bottom:1px solid #eee"><b>${r.date||'-'} ${r.track||''}${r.race||''}R</b>　${r.surface}${r.distance}m・${r.going}<br><span class="muted">1〜3着: ${r.p.join('-')} / ライン候補: ${r.candidates.map(c=>c.horse).join(', ')||'なし'}</span></div>`).join(''):'まだありません。';
+}
+function exportData(){
+ const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+ const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='keiba_growth_data.json';a.click();URL.revokeObjectURL(a.href);
+}
+function resetData(){if(confirm('保存したデータをすべて削除します。よろしいですか？')){data=[];localStorage.removeItem('keibaGrowthData');renderStats();}}
+$('date').value=new Date().toISOString().slice(0,10);
+for(let i=0;i<8;i++)addRow();
+if(window.navigator.standalone===false || (window.matchMedia && window.matchMedia('(display-mode: browser)').matches)){
+  const n=document.getElementById('installNote'); if(n) n.style.display='block';
+}
+if('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('sw.js').catch(()=>{});
+</script>
+</body></html>
