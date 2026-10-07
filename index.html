@@ -21,7 +21,7 @@ footer{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px sol
 <section id="ocr">
 <div class="card"><h2>① オッズ写真を読み込む</h2>
 <p class="note">iPhoneの写真・スクショを選択。まずは馬番＋数字を中心にOCRするベータ版です。</p>
-<label class="btn green" style="display:block;text-align:center">📷 写真を選択<input id="photo" type="file" accept="image/*" hidden></label>
+<label class="btn green" style="display:block;text-align:center">📷 写真を選択<input id="photo" type="file" accept="image/jpeg,image/png" hidden></label>
 <img id="preview" class="preview hidden"><div id="status" class="status">写真を選択してください。</div><div class="progress"><div id="bar" class="bar"></div></div></div>
 <div class="card"><h2>② OCR読み取り結果</h2><textarea id="ocrText" placeholder="OCR結果がここに表示されます"></textarea>
 <div class="row" style="margin-top:9px"><button id="runOcr">🔎 OCRを実行</button><button class="green" id="parseBtn">数字を抽出</button></div>
