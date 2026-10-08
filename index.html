@@ -1,60 +1,843 @@
-<!doctype html><html lang="ja"><head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#111827"><link rel="manifest" href="manifest.json">
+<!doctype html>
+
+<html lang="ja">
+
+<head>
+
+<meta charset="utf-8">
+
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+
+<meta name="theme-color" content="#111827">
+
+<link rel="manifest" href="manifest.json">
+
 <title>競馬データ成長アプリ 第2版</title>
+
 <style>
-body{margin:0;background:#f3f4f6;color:#17202a;font-family:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif}
-header{background:#111827;color:#fff;padding:16px}h1{font-size:21px;margin:0}.sub{color:#cbd5e1;font-size:13px;margin-top:5px}
-main{max-width:720px;margin:auto;padding:12px 12px 90px}.card{background:#fff;border-radius:18px;padding:16px;margin-bottom:12px;box-shadow:0 1px 5px #0001}
-h2{font-size:18px;margin:0 0 10px}.note,.small{font-size:12px;color:#6b7280;line-height:1.6}
-button,.btn{border:0;border-radius:12px;padding:13px 15px;font-size:15px;font-weight:800;background:#111827;color:#fff}.green{background:#16803c}.light{background:#e9edf1;color:#17202a}
-input,select,textarea{width:100%;padding:12px;border:1px solid #d7dce2;border-radius:11px;background:#fff;font-size:16px;box-sizing:border-box}
-textarea{min-height:120px;font-size:13px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.row{display:flex;gap:9px;align-items:center}.row>*{flex:1}
-.preview{width:100%;max-height:360px;object-fit:contain;border:1px solid #d7dce2;border-radius:12px;margin-top:10px}.status{padding:10px;border-radius:10px;background:#f1f5f9;font-size:13px;margin-top:10px}
-.progress{height:8px;background:#e5e7eb;border-radius:99px;overflow:hidden;margin-top:8px}.bar{height:100%;width:0;background:#16803c}
-table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:8px 4px;border-bottom:1px solid #e5e7eb;text-align:right}th:first-child,td:first-child,th:nth-child(2),td:nth-child(2){text-align:center}
-.gap{background:#fff7db;font-weight:800}.hot{color:#b42318;font-weight:900}.hidden{display:none!important}
-footer{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #d7dce2;display:flex;max-width:720px;margin:auto}.nav{flex:1;background:#fff;color:#6b7280;font-size:11px;padding:10px 4px 8px}.nav.active{color:#111827}
-</style></head><body>
-<header><h1>🏇 競馬データ成長アプリ</h1><div class="sub">第2版：写真読み込み・OCR・オッズ差検証</div></header>
+
+*{box-sizing:border-box}
+
+body{
+
+  margin:0;
+
+  background:#f3f4f6;
+
+  color:#17202a;
+
+  font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;
+
+}
+
+header{
+
+  background:#111827;
+
+  color:white;
+
+  padding:18px 16px;
+
+  font-size:20px;
+
+  font-weight:bold;
+
+}
+
+main{padding:16px;max-width:700px;margin:auto}
+
+.card{
+
+  background:white;
+
+  border-radius:14px;
+
+  padding:16px;
+
+  margin-bottom:14px;
+
+  box-shadow:0 2px 8px rgba(0,0,0,.08);
+
+}
+
+h2{font-size:18px;margin:0 0 12px}
+
+button{
+
+  width:100%;
+
+  border:0;
+
+  border-radius:10px;
+
+  padding:13px;
+
+  margin-top:8px;
+
+  font-size:16px;
+
+  font-weight:bold;
+
+  background:#111827;
+
+  color:white;
+
+}
+
+button.sub{background:#6b7280}
+
+button.danger{background:#b91c1c}
+
+input,select{
+
+  width:100%;
+
+  padding:11px;
+
+  border:1px solid #d1d5db;
+
+  border-radius:8px;
+
+  font-size:16px;
+
+  margin:5px 0;
+
+}
+
+.row{
+
+  display:flex;
+
+  gap:8px;
+
+  align-items:center;
+
+}
+
+.row>*{flex:1}
+
+.preview{
+
+  width:100%;
+
+  max-height:300px;
+
+  object-fit:contain;
+
+  border-radius:10px;
+
+  margin-top:10px;
+
+  display:none;
+
+}
+
+.result{
+
+  padding:10px;
+
+  border-bottom:1px solid #e5e7eb;
+
+}
+
+.gap{
+
+  background:#fff7ed;
+
+  border:2px solid #f97316;
+
+  border-radius:10px;
+
+  padding:10px;
+
+  margin:8px 0;
+
+}
+
+.longshot{
+
+  background:#fef2f2;
+
+  border:2px solid #dc2626;
+
+  border-radius:10px;
+
+  padding:12px;
+
+  font-weight:bold;
+
+}
+
+.small{font-size:13px;color:#6b7280}
+
+.hidden{display:none}
+
+</style>
+
+</head>
+
+<body>
+
+<header>🏇 競馬データ成長アプリ 第2版</header>
+
 <main>
-<section id="ocr">
-<div class="card"><h2>① オッズ写真を読み込む</h2>
-<p class="note">iPhoneの写真・スクショを選択。まずは馬番＋数字を中心にOCRするベータ版です。</p>
-<label class="btn green" style="display:block;text-align:center">📷 写真を選択<input id="photo" type="file" accept="image/*" hidden></label>
-<img id="preview" class="preview hidden"><div id="status" class="status">写真を選択してください。</div><div class="progress"><div id="bar" class="bar"></div></div></div>
-<div class="card"><h2>② OCR読み取り結果</h2><textarea id="ocrText" placeholder="OCR結果がここに表示されます"></textarea>
-<div class="row" style="margin-top:9px"><button id="runOcr">🔎 OCRを実行</button><button class="green" id="parseBtn">数字を抽出</button></div>
-<p class="small">初回はOCRエンジンの読み込みに時間がかかる場合があります。</p></div>
-</section>
-<section id="analysis" class="hidden">
-<div class="card"><h2>③ レース条件</h2><div class="grid">
-<input id="course" placeholder="競馬場 例: 中山"><input id="raceNo" placeholder="R 例: 11">
-<input id="distance" placeholder="距離 例: 1200" inputmode="numeric"><select id="going"><option>良</option><option>稍重</option><option>重</option><option>不良</option></select>
-</div></div>
-<div class="card"><h2>④ オッズデータ</h2><p class="note">基準馬は8番を初期設定。必要なら変更できます。</p>
-<div class="row"><input id="baseHorse" value="8" inputmode="numeric"><button class="light" id="sortBtn">差を計算</button></div><div id="horseEditor"></div></div>
-<div class="card"><h2>⑤ オッズ差ランキング</h2><div id="result"></div></div>
-<div class="card"><h2>⑥ 「差の境目」候補</h2><p class="note">隣同士の差が10以上の場所を目印にします。将来は5/7/8/10/12/15などを比較できます。</p><div id="gaps"></div></div>
-<div class="card"><h2>⑦ レースを保存</h2><div class="grid"><input id="finish" placeholder="結果 例: 7-3-1"><input id="threshold" value="10" inputmode="decimal" placeholder="境目"></div>
-<button class="green" style="width:100%;margin-top:9px" id="saveBtn">このレースを保存</button><p id="saveMsg" class="note"></p></div>
-<div class="card"><h2>⑧ 蓄積データ</h2><div id="history"></div></div>
-</section></main>
-<footer><button class="nav active" id="navOcr">📷<br>写真/OCR</button><button class="nav" id="navAnalysis">📊<br>分析</button></footer>
+
+<div class="card">
+
+  <h2>① レース情報</h2>
+
+  <div class="row">
+
+    <input id="raceDate" type="date">
+
+    <input id="raceName" type="text" placeholder="例：京都12R">
+
+  </div>
+
+  <button onclick="saveRace()">💾 このレースを保存</button>
+
+</div>
+
+<div class="card">
+
+  <h2>② オッズ写真</h2>
+
+  <input
+
+    id="photoInput"
+
+    type="file"
+
+    accept="image/*"
+
+    onchange="showPhoto(event)"
+
+  >
+
+  <img id="preview" class="preview">
+
+  <p class="small">
+
+    「写真を選択」を押すと、iPhoneの写真から画像を選べます。<br>
+
+    カメラを直接起動する方式ではありません。
+
+  </p>
+
+</div>
+
+<div class="card">
+
+  <h2>③ 1番人気を設定</h2>
+
+  <input
+
+    id="favorite"
+
+    type="number"
+
+    min="1"
+
+    max="18"
+
+    placeholder="1番人気の馬番"
+
+  >
+
+  <button onclick="createHorses()">馬番入力欄を作る</button>
+
+  <div id="horseInputs"></div>
+
+</div>
+
+<div class="card">
+
+  <h2>④ 馬単オッズを入力</h2>
+
+  <p class="small">
+
+    1番人気→相手 と 相手→1番人気 を入力します。
+
+  </p>
+
+  <div id="oddsInputs"></div>
+
+  <button onclick="calculate()">📊 オッズ差を計算</button>
+
+</div>
+
+<div class="card hidden" id="resultCard">
+
+  <h2>⑤ 計算結果</h2>
+
+  <div id="results"></div>
+
+</div>
+
+<div class="card">
+
+  <h2>⑥ 保存したレース</h2>
+
+  <div id="savedRaces"></div>
+
+  <button class="danger" onclick="clearRaces()">
+
+    保存データを全部削除
+
+  </button>
+
+</div>
+
+</main>
+
 <script>
-let horses=[],hist=JSON.parse(localStorage.getItem("kgHist")||"[]"),$=x=>document.getElementById(x);
-function view(a){$("ocr").classList.toggle("hidden",a!="ocr");$("analysis").classList.toggle("hidden",a!="analysis");$("navOcr").classList.toggle("active",a=="ocr");$("navAnalysis").classList.toggle("active",a=="analysis");}
-$("navOcr").onclick=()=>view("ocr");$("navAnalysis").onclick=()=>view("analysis");
-$("photo").onchange=e=>{let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{$("preview").src=r.result;$("preview").classList.remove("hidden");$("status").textContent="写真を読み込みました。「OCRを実行」を押してください。"};r.readAsDataURL(f)};
-async function tess(){if(window.Tesseract)return window.Tesseract;return new Promise((ok,no)=>{let s=document.createElement("script");s.src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js";s.onload=()=>ok(window.Tesseract);s.onerror=no;document.head.appendChild(s)})}
-$("runOcr").onclick=async()=>{if(!$("preview").src){$("status").textContent="先に写真を選択してください。";return}try{$("status").textContent="OCRエンジンを準備中…";$("bar").style.width="20%";let T=await tess(),w=await T.createWorker("eng");let r=await w.recognize($("preview").src);$("ocrText").value=r.data.text||"";await w.terminate();$("bar").style.width="100%";$("status").textContent="OCR完了。誤りがあれば修正して「数字を抽出」。"}catch(e){$("status").textContent="OCRに失敗。OCR結果欄へ数字を貼り付けて続行できます。"}};
-function pairs(t){let out=[],seen=new Set();for(let line of t.replace(/,/g,".").split(/\n+/)){let m=line.match(/(?:^|[^0-9])([1-9]|1[0-8])(?:[^0-9]+)(\d{1,3}(?:\.\d{1,2})?)/);if(m){let n=+m[1],o=+m[2];if(n<=18&&o>0&&!seen.has(n)){out.push({n,o});seen.add(n)}}}return out.sort((a,b)=>a.n-b.n)}
-$("parseBtn").onclick=()=>{horses=pairs($("ocrText").value);if(!horses.length){alert("馬番＋オッズを抽出できませんでした。OCR結果を確認してください。");return}edit();view("analysis")};
-function edit(){$("horseEditor").innerHTML=horses.map((h,i)=>'<div class="row" style="margin:7px 0"><input class="hn" data-i="'+i+'" value="'+h.n+'"><input class="ho" data-i="'+i+'" value="'+h.o+'"></div>').join("")}
-function sync(){document.querySelectorAll(".hn").forEach(x=>horses[+x.dataset.i].n=+x.value);document.querySelectorAll(".ho").forEach(x=>horses[+x.dataset.i].o=+x.value);horses=horses.filter(x=>x.n>=1&&x.n<=18&&x.o>0)}
-function calc(){sync();let b=+$("baseHorse").value,bh=horses.find(x=>x.n==b);if(!bh){alert(b+"番がありません");return null}let a=horses.filter(x=>x.n!=b).map(x=>({n:x.n,o:x.o,d:+(x.o-bh.o).toFixed(2)})).sort((x,y)=>x.d-y.d),p=null;a.forEach(x=>{x.g=p==null?null:+(x.d-p).toFixed(2);p=x.d});return {b,bh,a}}
-$("sortBtn").onclick=()=>{let z=calc();if(!z)return;$("result").innerHTML='<p class="note">基準馬：'+z.b+'番（'+z.bh.o+'）</p><table><tr><th>順位</th><th>馬番</th><th>オッズ</th><th>オッズ差</th><th>前との差</th></tr>'+z.a.map((x,i)=>'<tr class="'+(x.g>=10?"gap":"")+'"><td>'+(i+1)+'</td><td>'+x.n+'</td><td>'+x.o+'</td><td>'+x.d+'</td><td>'+(x.g==null?"－":x.g)+'</td></tr>').join("")+'</table>';let g=z.a.filter(x=>x.g>=10);$("gaps").innerHTML=g.length?g.map(x=>'<div class="status">差 <b>'+x.g+'</b>：'+x.n+'番側が小さい数字。<span class="hot">穴候補ライン</span></div>').join(""):"10以上の境目はありません。"};
-$("saveBtn").onclick=()=>{let z=calc();if(!z)return;let th=+$("threshold").value||10,cs=z.a.filter(x=>x.g>=th).map(x=>x.n),item={date:new Date().toLocaleString("ja-JP"),course:$("course").value,race:$("raceNo").value,distance:$("distance").value,going:$("going").value,base:z.b,threshold:th,candidates:cs,finish:$("finish").value};hist.unshift(item);hist=hist.slice(0,500);localStorage.setItem("kgHist",JSON.stringify(hist));$("saveMsg").textContent="保存しました。累計 "+hist.length+" レース。穴候補："+(cs.join(",")||"なし");showHist()};
-function showHist(){let el=$("history");el.innerHTML=hist.length?'<p>保存レース：<b>'+hist.length+'</b></p>'+hist.slice(0,20).map(x=>'<div class="status">'+(x.course||"競馬場未入力")+" "+(x.race||"")+"R・"+(x.distance||"")+"m・"+(x.going||"")+" ／ 境目"+x.threshold+" ／ 穴候補 "+(x.candidates.join(",")||"なし")+(x.finish?" ／ 結果 "+x.finish:"")+"</div>").join(""):'<p class="note">まだ保存データがありません。</p>'}
-showHist();if("serviceWorker"in navigator)navigator.serviceWorker.register("sw.js");
-</script></body></html>
+
+let horses = [];
+
+let lastResults = [];
+
+/* 写真表示 */
+
+function showPhoto(event){
+
+  const file = event.target.files[0];
+
+  if(!file) return;
+
+  const preview = document.getElementById("preview");
+
+  preview.src = URL.createObjectURL(file);
+
+  preview.style.display = "block";
+
+}
+
+/* 馬番入力欄作成 */
+
+function createHorses(){
+
+  const favorite =
+
+    Number(document.getElementById("favorite").value);
+
+  if(!favorite){
+
+    alert("1番人気の馬番を入力してください");
+
+    return;
+
+  }
+
+  horses = [];
+
+  let html = "";
+
+  for(let i=1;i<=18;i++){
+
+    if(i === favorite) continue;
+
+    horses.push(i);
+
+    html += `
+
+      <div class="row">
+
+        <div>
+
+          <strong>${i}番</strong>
+
+        </div>
+
+        <input
+
+          id="horse_${i}"
+
+          type="number"
+
+          min="1"
+
+          step="0.1"
+
+          placeholder="単勝オッズ"
+
+        >
+
+      </div>
+
+    `;
+
+  }
+
+  document.getElementById("horseInputs").innerHTML = html;
+
+  createOddsInputs();
+
+}
+
+/* 馬単入力欄 */
+
+function createOddsInputs(){
+
+  let html = "";
+
+  const favorite =
+
+    Number(document.getElementById("favorite").value);
+
+  horses.forEach(horse => {
+
+    html += `
+
+      <div class="card" style="padding:12px;margin:8px 0">
+
+        <strong>${favorite}番 → ${horse}番</strong>
+
+        <input
+
+          id="odds_${favorite}_${horse}"
+
+          type="number"
+
+          min="0"
+
+          step="0.1"
+
+          placeholder="${favorite}→${horse} 馬単オッズ"
+
+        >
+
+        <strong>${horse}番 → ${favorite}番</strong>
+
+        <input
+
+          id="odds_${horse}_${favorite}"
+
+          type="number"
+
+          min="0"
+
+          step="0.1"
+
+          placeholder="${horse}→${favorite} 馬単オッズ"
+
+        >
+
+      </div>
+
+    `;
+
+  });
+
+  document.getElementById("oddsInputs").innerHTML = html;
+
+}
+
+/* 計算 */
+
+function calculate(){
+
+  const favorite =
+
+    Number(document.getElementById("favorite").value);
+
+  if(!favorite){
+
+    alert("1番人気を設定してください");
+
+    return;
+
+  }
+
+  let data = [];
+
+  horses.forEach(horse => {
+
+    const forward =
+
+      Number(
+
+        document.getElementById(
+
+          `odds_${favorite}_${horse}`
+
+        ).value
+
+      );
+
+    const reverse =
+
+      Number(
+
+        document.getElementById(
+
+          `odds_${horse}_${favorite}`
+
+        ).value
+
+      );
+
+    if(forward > 0 && reverse > 0){
+
+      /*
+
+       重要：
+
+       1番人気→相手
+
+       −
+
+       相手→1番人気
+
+      */
+
+      const difference = forward - reverse;
+
+      data.push({
+
+        horse:horse,
+
+        forward:forward,
+
+        reverse:reverse,
+
+        difference:difference
+
+      });
+
+    }
+
+  });
+
+  if(data.length < 2){
+
+    alert("2頭以上のオッズを入力してください");
+
+    return;
+
+  }
+
+  /* 差を小さい順 */
+
+  data.sort((a,b) =>
+
+    a.difference - b.difference
+
+  );
+
+  lastResults = data;
+
+  let html = "";
+
+  html += `
+
+    <div class="small">
+
+      基準馬：${favorite}番
+
+    </div>
+
+  `;
+
+  /* 並び順 */
+
+  data.forEach((item,index)=>{
+
+    html += `
+
+      <div class="result">
+
+        <strong>${index+1}位　${item.horse}番</strong><br>
+
+        ${favorite}→${item.horse}：
+
+        ${item.forward}<br>
+
+        ${item.horse}→${favorite}：
+
+        ${item.reverse}<br>
+
+        <strong>
+
+          差：${item.difference.toFixed(1)}
+
+        </strong>
+
+      </div>
+
+    `;
+
+  });
+
+  /* 隣同士の差 */
+
+  html += `
+
+    <h3>📐 隣同士の段差</h3>
+
+  `;
+
+  let longshots = [];
+
+  for(let i=0;i<data.length-1;i++){
+
+    const upper = data[i];
+
+    const lower = data[i+1];
+
+    const gap =
+
+      lower.difference - upper.difference;
+
+    html += `
+
+      <div class="gap">
+
+        ${upper.horse}番
+
+        →
+
+        ${lower.horse}番
+
+        <br>
+
+        ${upper.difference.toFixed(1)}
+
+        →
+
+        ${lower.difference.toFixed(1)}
+
+        <br>
+
+        <strong>
+
+          段差：${gap.toFixed(1)}
+
+        </strong>
+
+      </div>
+
+    `;
+
+    /*
+
+      10以上の段差なら
+
+      「上側＝直前の馬」を穴候補
+
+    */
+
+    if(gap >= 10){
+
+      longshots.push({
+
+        horse:upper.horse,
+
+        gap:gap
+
+      });
+
+    }
+
+  }
+
+  if(longshots.length){
+
+    html += `
+
+      <h3>🚨 10以上の境目</h3>
+
+    `;
+
+    longshots.forEach(item=>{
+
+      html += `
+
+        <div class="longshot">
+
+          穴候補：${item.horse}番<br>
+
+          境目：${item.gap.toFixed(1)}
+
+        </div>
+
+      `;
+
+    });
+
+  }else{
+
+    html += `
+
+      <div class="small">
+
+        10以上の大きな境目はありません。
+
+      </div>
+
+    `;
+
+  }
+
+  document.getElementById("results").innerHTML = html;
+
+  document
+
+    .getElementById("resultCard")
+
+    .classList.remove("hidden");
+
+}
+
+/* レース保存 */
+
+function saveRace(){
+
+  const date =
+
+    document.getElementById("raceDate").value;
+
+  const name =
+
+    document.getElementById("raceName").value;
+
+  if(!name){
+
+    alert("レース名を入力してください");
+
+    return;
+
+  }
+
+  const saved =
+
+    JSON.parse(
+
+      localStorage.getItem("keibaRaces") || "[]"
+
+    );
+
+  saved.push({
+
+    date:date,
+
+    name:name,
+
+    favorite:
+
+      document.getElementById("favorite").value,
+
+    results:lastResults,
+
+    savedAt:new Date().toLocaleString("ja-JP")
+
+  });
+
+  localStorage.setItem(
+
+    "keibaRaces",
+
+    JSON.stringify(saved)
+
+  );
+
+  displaySaved();
+
+  alert("レースデータを保存しました！");
+
+}
+
+/* 保存データ表示 */
+
+function displaySaved(){
+
+  const saved =
+
+    JSON.parse(
+
+      localStorage.getItem("keibaRaces") || "[]"
+
+    );
+
+  const box =
+
+    document.getElementById("savedRaces");
+
+  if(saved.length === 0){
+
+    box.innerHTML =
+
+      '<div class="small">まだ保存されたレースはありません。</div>';
+
+    return;
+
+  }
+
+  let html = "";
+
+  saved.slice().reverse().forEach((race,index)=>{
+
+    html += `
+
+      <div class="result">
+
+        <strong>
+
+          ${race.date || ""}
+
+          ${race.name}
+
+        </strong>
+
+        <br>
+
+        1番人気：
+
+        ${race.favorite || "-"}
+
+        <br>
+
+        保存：
+
+        ${race.savedAt}
+
+      </div>
+
+    `;
+
+  });
+
+  box.innerHTML = html;
+
+}
+
+/* 保存データ削除 */
+
+function clearRaces(){
+
+  if(
+
+    !confirm(
+
+      "保存したレースデータを全部削除しますか？"
+
+    )
+
+  ) return;
+
+  localStorage.removeItem("keibaRaces");
+
+  displaySaved();
+
+  alert("保存データを削除しました。");
+
+}
+
+/* 起動時 */
+
+displaySaved();
+
+</script>
+
+</body>
+
+</html>
