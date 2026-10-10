@@ -300,19 +300,30 @@ let lastResults = [];
 
 /* 写真表示 */
 
-function showPhoto(event){
+function showPhoto&#40;event&#41; \{
+const files = Array\.from&#40;event\.target\.files&#41;;
+if &#40;files\.length === 0&#41; return;
 
-  const file = event.target.files[0];
+const preview = document\.getElementById&#40;“preview”&#41;;
+preview\.innerHTML = “”;
 
-  if(!file) return;
+files\.forEach&#40;function&#40;file&#41; \{
+if &#40;\!file\.type\.startsWith&#40;“image/”&#41;&#41; return;
 
-  const preview = document.getElementById("preview");
+```
+const img = document.createElement("img");
+img.src = URL.createObjectURL(file);
+img.style.width = "100%";
+img.style.maxWidth = "500px";
+img.style.height = "auto";
+img.style.display = "block";
+img.style.margin = "10px auto";
 
-  preview.src = URL.createObjectURL(file);
+preview.appendChild(img);
+```
 
-  preview.style.display = "block";
-
-}
+\}&#41;;
+\}
   
 
 /* 馬番入力欄作成 */
