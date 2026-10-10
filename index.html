@@ -300,41 +300,39 @@ let lastResults = [];
 
 /* 写真表示 */
 
-function showPhoto&#40;event&#41; \{
+function showPhoto(event) {
 
-  const files = Array\.from&#40;event\.target\.files&#41;;
+  const files = Array.from(event.target.files);
 
-  if &#40;files\.length === 0&#41; return;
+  if (files.length === 0) return;
 
-const preview = document\.getElementById&#40;“preview”&#41;;
+  const preview = document.getElementById("preview");
 
-  preview\.innerHTML = “”;
+  preview.innerHTML = "";
 
-files\.forEach&#40;function&#40;file&#41; \{
+  files.forEach(function(file) {
 
-  if &#40;\!file\.type\.startsWith&#40;“image/”&#41;&#41; return;
+    if (!file.type.startsWith("image/")) return;
 
-```
-const img = document.createElement("img");
+    const img = document.createElement("img");
 
-img.src = URL.createObjectURL(file);
+    img.src = URL.createObjectURL(file);
 
-img.style.width = "100%";
+    img.style.width = "100%";
 
-img.style.maxWidth = "500px";
+    img.style.maxWidth = "500px";
 
-img.style.height = "auto";
+    img.style.height = "auto";
 
-img.style.display = "block";
+    img.style.display = "block";
 
-img.style.margin = "10px auto";
+    img.style.margin = "10px auto";
 
-preview.appendChild(img);
-```
+    preview.appendChild(img);
 
-\}&#41;;
+  });
 
-  \}
+}
   
 /* 馬番入力欄作成 */
 
