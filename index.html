@@ -4,53 +4,112 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#111827">
-<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
-<title>競馬データ成長アプリ 第3版 OCRテスト</title>
+<title>競馬データ成長アプリ 第4版</title>
 <style>
-*{box-sizing:border-box}body{margin:0;background:#f3f4f6;color:#17202a;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.5}header{background:#111827;color:white;padding:18px 16px}header h1{font-size:21px;margin:0 0 4px}header p{margin:0;color:#d1d5db;font-size:13px}main{max-width:900px;margin:auto;padding:14px;display:grid;gap:14px}.card{background:white;border:1px solid #dbe1e8;border-radius:14px;padding:15px;box-shadow:0 2px 6px #00000008}h2{font-size:17px;margin:0 0 10px}.hint{font-size:13px;color:#64748b}.row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}label{display:block;font-size:13px;font-weight:650;margin:9px 0 5px}input,select,textarea,button{font:inherit}input[type=text],input[type=number],input[type=date],select,textarea{width:100%;min-height:42px;padding:10px;border:1px solid #cbd5e1;border-radius:9px;background:#fff}textarea{min-height:100px}button,.filebutton{display:inline-flex;align-items:center;justify-content:center;min-height:42px;padding:10px 13px;border:0;border-radius:10px;background:#1d4ed8;color:white;font-weight:700;cursor:pointer}.secondary{background:#e2e8f0;color:#17202a}.danger{background:#b91c1c}.filebutton input{display:none}.btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.note{background:#eff6ff;color:#1e3a8a;border-radius:9px;padding:10px;font-size:13px}.photo-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-top:10px}.photo{border:1px solid #dbe1e8;border-radius:10px;overflow:hidden;background:#f8fafc;min-width:0}.photo img{display:block;width:100%;height:180px;object-fit:contain;background:#e5e7eb}.photo div{padding:7px;font-size:12px;overflow-wrap:anywhere}.table-wrap{overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:13px}th,td{border-bottom:1px solid #dbe1e8;padding:7px 5px;text-align:right;white-space:nowrap}th{background:#f8fafc}th:first-child,td:first-child{text-align:center}td input{width:90px!important;padding:7px!important;min-height:36px!important}.tag{display:inline-block;background:#fef3c7;color:#92400e;border-radius:5px;padding:1px 5px;font-size:11px}.success{color:#166534;font-weight:700}.warning{color:#b91c1c;font-weight:700}.saved{border:1px solid #dbe1e8;border-radius:10px;padding:10px;margin-top:8px}.saved h3{font-size:14px;margin:0 0 5px}.saved p{font-size:12px;color:#64748b;margin:3px 0}
-#ocrText{white-space:pre-wrap;overflow-wrap:anywhere;background:#f8fafc;border:1px solid #cbd5e1;border-radius:9px;padding:10px;min-height:48px;font-size:13px}
-#ocrProgress{font-size:13px;color:#1d4ed8;margin-top:8px}@media(min-width:720px){main{grid-template-columns:1fr 1fr}.wide{grid-column:1/-1}.photo-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+*{box-sizing:border-box}body{margin:0;background:#f3f4f6;color:#17202a;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.5}header{background:#111827;color:white;padding:18px 16px}header h1{font-size:21px;margin:0 0 4px}header p{margin:0;color:#d1d5db;font-size:13px}main{max-width:900px;margin:auto;padding:14px;display:grid;gap:14px}.card{background:white;border:1px solid #dbe1e8;border-radius:14px;padding:15px;box-shadow:0 2px 6px #00000008}h2{font-size:17px;margin:0 0 10px}.hint{font-size:13px;color:#64748b}.row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}label{display:block;font-size:13px;font-weight:650;margin:9px 0 5px}input,select,textarea,button{font:inherit}input[type=text],input[type=number],input[type=date],select,textarea{width:100%;min-height:42px;padding:10px;border:1px solid #cbd5e1;border-radius:9px;background:#fff}textarea{min-height:100px}button,.filebutton{display:inline-flex;align-items:center;justify-content:center;min-height:42px;padding:10px 13px;border:0;border-radius:10px;background:#1d4ed8;color:white;font-weight:700;cursor:pointer}.secondary{background:#e2e8f0;color:#17202a}.danger{background:#b91c1c;color:white}.filebutton input{display:none}.btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.note{background:#eff6ff;color:#1e3a8a;border-radius:9px;padding:10px;font-size:13px}.photo-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-top:10px}.photo{border:1px solid #dbe1e8;border-radius:10px;overflow:hidden;background:#f8fafc;min-width:0}.photo img{display:block;width:100%;height:180px;object-fit:contain;background:#e5e7eb}.photo div{padding:7px;font-size:12px;overflow-wrap:anywhere}.table-wrap{overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:13px}th,td{border-bottom:1px solid #dbe1e8;padding:7px 5px;text-align:right;white-space:nowrap}th{background:#f8fafc}th:first-child,td:first-child{text-align:center}td input{width:90px!important;padding:7px!important;min-height:36px!important}.tag{display:inline-block;background:#fef3c7;color:#92400e;border-radius:5px;padding:1px 5px;font-size:11px}.success{color:#166534;font-weight:700}.warning{color:#b91c1c;font-weight:700}.saved{border:1px solid #dbe1e8;border-radius:10px;padding:10px;margin-top:8px}.saved h3{font-size:14px;margin:0 0 5px}.saved p{font-size:12px;color:#64748b;margin:3px 0}#ocrText{white-space:pre-wrap;overflow-wrap:anywhere;background:#f8fafc;border:1px solid #cbd5e1;border-radius:9px;padding:10px;min-height:48px;font-size:13px}#ocrProgress{font-size:13px;color:#1d4ed8;margin-top:8px}@media(min-width:720px){main{grid-template-columns:1fr 1fr}.wide{grid-column:1/-1}.photo-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 </style>
 </head>
 <body>
-<header><h1>競馬データ成長アプリ 第3版</h1><p>複数写真プレビュー・OCR読み取りテスト・馬単オッズ差・境目検出・レース記録</p></header>
+<header><h1>競馬データ成長アプリ 第4版</h1><p>写真の個別削除・複数写真プレビュー・OCR・馬単オッズ差・境目検出・レース記録</p></header>
 <main>
 <section class="card wide"><h2>① レース情報</h2><div class="row"><div><label for="date">日付</label><input id="date" type="date"></div><div><label for="track">競馬場</label><select id="track"><option>中山</option><option>東京</option><option>京都</option><option>阪神</option><option>中京</option><option>新潟</option><option>札幌</option><option>函館</option><option>福島</option><option>小倉</option><option>その他</option></select></div></div><div class="row"><div><label for="race">レース番号</label><input id="race" type="text" placeholder="例：11R"></div><div><label for="condition">条件・馬場</label><input id="condition" type="text" placeholder="例：芝1200m・稍重"></div></div><label for="memo">メモ</label><textarea id="memo" placeholder="当日の傾向、気づいたことなど"></textarea></section>
-<section class="card wide"><h2>② 写真を選択（複数選択OK）</h2><p class="hint">写真を選び、下の「写真の文字を読み取る」を押してください。まずはOCRが認識した文字を表示します。馬番・オッズの自動振り分けは読み取り精度を確認してから追加します。</p><label class="filebutton">写真を選ぶ<input id="photos" type="file" accept="image/*" multiple></label><div id="photoStatus" class="hint">まだ写真は選ばれていません。</div><div id="photoGrid" class="photo-grid"></div>
-<div class="btns"><button id="readOcr" type="button">写真の文字を読み取る（OCRテスト）</button></div><div id="ocrProgress" class="hint">写真を選んでからOCRテストを押してください。</div><h3 style="font-size:15px;margin:12px 0 6px">読み取り結果（確認用）</h3><div id="ocrText">まだ読み取りをしていません。</div><p class="hint">※まずは文字を読み取るテストです。馬番・オッズ欄への自動振り分けは、読み取り精度を確認してから追加します。初回は通信量が多くなる場合があります。</p><div class="btns"><button id="runOcr" type="button">写真の文字を読み取る</button><button id="clearOcr" type="button" class="secondary">読み取り結果を消す</button></div><div id="ocrStatus" class="hint" aria-live="polite">読み取り待ちです。初回は文字認識エンジンの読み込みに時間がかかる場合があります。</div><label for="ocrText">読み取り結果（必要に応じてコピー・確認できます）</label><textarea id="ocrText" placeholder="読み取り結果がここに表示されます"></textarea></section>
+<section class="card wide"><h2>② 写真を選択（複数選択OK）</h2><p class="hint">写真を選ぶとプレビューが表示されます。間違えた写真は、その写真の下にある「この写真を削除」で1枚ずつ外せます。OCRは残っている写真だけを読み取ります。</p><label class="filebutton">写真を選ぶ<input id="photos" type="file" accept="image/*" multiple></label><div id="photoStatus" class="hint">まだ写真は選ばれていません。</div><div id="photoGrid" class="photo-grid"></div>
+<div class="btns"><button id="runOcr" type="button">写真の文字を読み取る（OCR）</button><button id="clearOcr" type="button" class="secondary">読み取り結果を消す</button></div><div id="ocrProgress" class="hint" aria-live="polite">写真を選んでからOCRを押してください。</div><h3 style="font-size:15px;margin:12px 0 6px">読み取り結果（確認用）</h3><textarea id="ocrText" placeholder="読み取り結果がここに表示されます"></textarea><p class="hint">OCRは写真内の文字を広く読み取るテストです。馬番やオッズ以外の文字も含まれる場合があります。結果を確認してから手入力でオッズ欄に転記してください。</p></section>
 <section class="card wide"><h2>③ 馬単オッズ入力・計算</h2><div class="note"><b>計算式：</b> 相手 → 1番人気 の馬単オッズ − 1番人気 → 相手 の馬単オッズ。差を小さい順に並べ、隣同士の差がしきい値以上なら、その境目の直前（小さい側）の馬を「仮説穴馬候補」とします。</div><div class="row"><div><label for="favorite">1番人気の馬番</label><input id="favorite" type="number" min="1" max="18" placeholder="例：5"></div><div><label for="threshold">境目しきい値</label><input id="threshold" type="number" min="0" step="0.1" value="10"></div></div><p class="hint">各相手馬について、2方向の馬単オッズを入力してください。計算前に数字を確認してください。</p><div class="table-wrap"><table><thead><tr><th>相手馬番</th><th>1番人気→相手</th><th>相手→1番人気</th><th>操作</th></tr></thead><tbody id="oddsBody"></tbody></table></div><div class="btns"><button id="addRow" type="button" class="secondary">＋ 相手馬を追加</button><button id="calculate" type="button">計算・並べ替え</button><button id="clearRows" type="button" class="secondary">入力をクリア</button></div><div id="results" style="margin-top:14px"></div></section>
 <section class="card wide"><h2>④ 保存・検証</h2><p class="hint">保存データはこの端末・ブラウザ内に保存されます。ブラウザのデータ削除などで消える場合があるため、ときどき「データを書き出す」でバックアップしてください。</p><div class="btns"><button id="save" type="button">このレースを保存</button><button id="export" type="button" class="secondary">データを書き出す</button><label class="filebutton" style="background:#475569">保存データを読み込む<input id="import" type="file" accept="application/json,.json"></label></div><div id="status" class="hint"></div><div id="savedList"></div></section>
 </main>
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <script>
 (()=>{
-const $=id=>document.getElementById(id);const now=new Date();$('date').value=[now.getFullYear(),String(now.getMonth()+1).padStart(2,'0'),String(now.getDate()).padStart(2,'0')].join('-');let photoNames=[],selectedFiles=[],lastCalc=null,ocrBusy=false;
-function addRow(h='',a='',b=''){const tr=document.createElement('tr');const vals=[h,a,b],labels=['相手馬番','1番人気から相手のオッズ','相手から1番人気のオッズ'];vals.forEach((v,i)=>{const td=document.createElement('td'),inp=document.createElement('input');inp.type='number';inp.min='0';inp.step='0.1';inp.value=v;inp.setAttribute('aria-label',labels[i]);inp.placeholder=i?'オッズ':'馬番';td.appendChild(inp);tr.appendChild(td)});const td=document.createElement('td'),btn=document.createElement('button');btn.type='button';btn.className='secondary';btn.textContent='削除';btn.style.padding='6px 8px';btn.addEventListener('click',()=>tr.remove());td.appendChild(btn);tr.appendChild(td);$('oddsBody').appendChild(tr)}
-for(let i=0;i<8;i++)addRow();$('addRow').addEventListener('click',()=>addRow());$('clearRows').addEventListener('click',()=>{$('oddsBody').innerHTML='';$('results').innerHTML='';lastCalc=null;addRow()});
-$('photos').addEventListener('change',e=>{selectedFiles=Array.from(e.target.files||[]);const grid=$('photoGrid');grid.replaceChildren();photoNames=selectedFiles.map(f=>f.name);$('photoStatus').textContent=selectedFiles.length?selectedFiles.length+'枚選択しました。画像を読み込んでいます…':'まだ写真は選ばれていません。';selectedFiles.forEach(file=>{const box=document.createElement('div');box.className='photo';const img=document.createElement('img');img.alt=file.name;const caption=document.createElement('div');caption.textContent=file.name;box.append(img,caption);grid.appendChild(box);const url=URL.createObjectURL(file);img.onload=()=>URL.revokeObjectURL(url);img.onerror=()=>{caption.textContent=file.name+'（画像を表示できませんでした）'};img.src=url});if(selectedFiles.length)$('photoStatus').textContent=selectedFiles.length+'枚選択中。下にプレビューを表示しています。'});
-$('clearOcr').addEventListener('click',()=>{$('ocrText').value='';$('ocrStatus').textContent='読み取り結果を消しました。'});
-$('runOcr').addEventListener('click',async()=>{if(ocrBusy)return;if(!selectedFiles.length){$('ocrStatus').textContent='先に「写真を選ぶ」から写真を選択してください。';return}if(!window.Tesseract){$('ocrStatus').textContent='文字認識エンジンを読み込めませんでした。通信状態を確認し、ページを再読み込みしてください。';return}ocrBusy=true;$('runOcr').disabled=true;$('ocrText').value='';try{const worker=await Tesseract.createWorker('eng',1,{logger:m=>{if(m.status){const pct=typeof m.progress==='number'?' '+Math.round(m.progress*100)+'%':'';$('ocrStatus').textContent='OCR処理中：'+m.status+pct}}});let combined='';for(let i=0;i<selectedFiles.length;i++){$('ocrStatus').textContent='写真 '+(i+1)+'/'+selectedFiles.length+' を読み取り中…';const result=await worker.recognize(selectedFiles[i]);combined+='【'+selectedFiles[i].name+'】\n'+(result.data.text||'（文字を認識できませんでした）')+'\n\n';$('ocrText').value=combined}await worker.terminate();$('ocrStatus').textContent='読み取り完了。数字・小数点などに誤認識がないか、結果を確認してください。まだオッズ欄への自動入力は行いません。'}catch(err){$('ocrStatus').textContent='読み取りに失敗しました。通信状態を確認して再試行してください。';console.error(err)}finally{ocrBusy=false;$('runOcr').disabled=false}});
-function calculate(){const fav=Number($('favorite').value),threshold=Number($('threshold').value);if(!fav||fav<1){$('results').innerHTML='<p class="warning">1番人気の馬番を入力してください。</p>';return null}const all=Array.from($('oddsBody').querySelectorAll('tr')).map(tr=>Array.from(tr.querySelectorAll('input')).map(x=>x.value));const seen=new Set(),rows=[];all.forEach(v=>{if(v.some(x=>x===''))return;const horse=Number(v[0]),favTo=Number(v[1]),toFav=Number(v[2]);if(!horse||horse===fav||favTo<=0||toFav<=0||seen.has(horse))return;seen.add(horse);rows.push({horse,favTo,toFav,diff:Math.round((toFav-favTo)*100)/100})});rows.sort((a,b)=>a.diff-b.diff);rows.forEach((r,i)=>r.gap=i?Math.round((r.diff-rows[i-1].diff)*100)/100:null);const candidates=[];for(let i=0;i<rows.length-1;i++){const gap=Math.round((rows[i+1].diff-rows[i].diff)*100)/100;if(gap>=threshold)candidates.push({...rows[i],boundary:gap,nextHorse:rows[i+1].horse})}lastCalc={favorite:fav,threshold,rows,candidates};if(!rows.length){$('results').innerHTML='<p>計算できる行がありません。馬番と両方向のオッズを入力してください。</p>';return lastCalc}let html='<h3>計算結果（差の小さい順）</h3><div class="table-wrap"><table><thead><tr><th>順位</th><th>馬番</th><th>1番人気→相手</th><th>相手→1番人気</th><th>差</th><th>前との差</th></tr></thead><tbody>';rows.forEach((r,i)=>{const cand=candidates.some(c=>c.horse===r.horse);html+='<tr'+(cand?' style="background:#fef3c7"':'')+'><td>'+(i+1)+'</td><td><b>'+r.horse+'</b>'+(cand?' <span class="tag">穴候補</span>':'')+'</td><td>'+r.favTo+'</td><td>'+r.toFav+'</td><td><b>'+r.diff+'</b></td><td>'+(r.gap===null?'—':r.gap)+'</td></tr>'});html+='</tbody></table></div>';if(candidates.length){html+='<h3>境目の仮説穴馬候補</h3><ul>';candidates.forEach(c=>html+='<li><b>'+c.horse+'番</b>（差 '+c.diff+'）— 次の '+c.nextHorse+'番との境目：'+c.boundary+'</li>');html+='</ul><p class="hint">これは検証用の仮説候補で、好走を保証するものではありません。</p>'}else html+='<p class="hint">しきい値 '+threshold+' 以上の境目はありません。</p>';$('results').innerHTML=html;return lastCalc}
-$('readOcr').addEventListener('click',async()=>{
- const files=selectedFiles;
- if(!files.length){$('ocrProgress').textContent='先に「写真を選ぶ」から写真を選んでください。';return;}
- if(!window.Tesseract){$('ocrProgress').textContent='OCRライブラリを読み込めませんでした。通信状態を確認して、ページを再読み込みしてください。';return;}
- $('readOcr').disabled=true;$('ocrText').textContent='';
- try{
-  const worker=await Tesseract.createWorker('jpn+eng',1,{logger:m=>{if(m.status){const pct=typeof m.progress==='number'?' '+Math.round(m.progress*100)+'%':'';$('ocrProgress').textContent='読み取り中：'+m.status+pct;}}});
-  let outputs=[];
-  for(let i=0;i<files.length;i++){
-   $('ocrProgress').textContent='写真 '+(i+1)+' / '+files.length+' 枚目を読み取り中…';
-   const result=await worker.recognize(files[i]);
-   outputs.push('【'+files[i].name+'】\n'+((result.data&&result.data.text)||'（文字を認識できませんでした）').trim());
-  }
-  await worker.terminate();$('ocrText').textContent=outputs.join('\n\n--------------------\n\n');$('ocrProgress').textContent='読み取り完了。馬番・オッズの数字が正しいか、結果を確認してください。';
- }catch(err){$('ocrProgress').textContent='読み取りに失敗しました。通信状態を確認して、写真を1枚にして再度試してください。';$('ocrText').textContent=String(err&&err.message||err);}
- finally{$('readOcr').disabled=false;}
+const $=id=>document.getElementById(id);
+const now=new Date();
+$('date').value=[now.getFullYear(),String(now.getMonth()+1).padStart(2,'0'),String(now.getDate()).padStart(2,'0')].join('-');
+let photoNames=[],selectedFiles=[],lastCalc=null,ocrBusy=false,photoUrls=[];
+function renderPhotos(){
+ const grid=$('photoGrid');
+ grid.replaceChildren();
+ selectedFiles.forEach((file,index)=>{
+  const box=document.createElement('div');box.className='photo';
+  const img=document.createElement('img');img.alt=file.name;
+  const caption=document.createElement('div');caption.textContent=file.name;
+  const btn=document.createElement('button');btn.type='button';btn.className='danger';btn.textContent='この写真を削除';btn.style.margin='0 7px 7px';
+  btn.addEventListener('click',()=>{
+   selectedFiles=selectedFiles.filter((_,i)=>i!==index);
+   photoNames=selectedFiles.map(f=>f.name);
+   renderPhotos();
+   $('photoStatus').textContent=selectedFiles.length?selectedFiles.length+'枚選択中。':'まだ写真は選ばれていません。';
+  });
+  const url=URL.createObjectURL(file);photoUrls.push(url);
+  img.onload=()=>{URL.revokeObjectURL(url);photoUrls=photoUrls.filter(u=>u!==url)};
+  img.onerror=()=>{caption.textContent=file.name+'（画像を表示できませんでした）';URL.revokeObjectURL(url);photoUrls=photoUrls.filter(u=>u!==url)};
+  img.src=url;
+  box.append(img,caption,btn);grid.appendChild(box);
+ });
+}
+$('photos').addEventListener('change',e=>{
+ selectedFiles=Array.from(e.target.files||[]);
+ photoNames=selectedFiles.map(f=>f.name);
+ renderPhotos();
+ $('photoStatus').textContent=selectedFiles.length?selectedFiles.length+'枚選択中。下にプレビューを表示しています。':'まだ写真は選ばれていません。';
+ e.target.value='';
 });
-$('calculate').addEventListener('click',calculate);function readSaved(){try{return JSON.parse(localStorage.getItem('keibaGrowthV3')||'[]')}catch(e){return []}}function writeSaved(a){localStorage.setItem('keibaGrowthV3',JSON.stringify(a))}function record(){const calc=lastCalc||calculate();return{id:Date.now(),date:$('date').value,track:$('track').value,race:$('race').value,condition:$('condition').value,memo:$('memo').value,photoNames:photoNames.slice(),ocrText:$('ocrText').value,calculation:calc,savedAt:new Date().toISOString()}}
-function renderSaved(){const box=$('savedList'),data=readSaved().sort((a,b)=>b.id-a.id);box.replaceChildren();if(!data.length){box.innerHTML='<p class="hint">保存したレースはまだありません。</p>';return}data.forEach(rec=>{const div=document.createElement('div');div.className='saved';const h=document.createElement('h3');h.textContent=(rec.date||'日付なし')+' · '+(rec.track||'')+' '+(rec.race||'');const p=document.createElement('p');p.textContent=(rec.condition||'条件なし')+' / 写真ファイル名 '+((rec.photoNames||[]).length)+'件';const p2=document.createElement('p');const cs=rec.calculation&&rec.calculation.candidates||[];p2.textContent='仮説穴馬候補：'+(cs.length?cs.map(c=>c.horse+'番（境目 '+c.boundary+'）').join('、'):'なし');const del=document.createElement('button');del.className='danger';del.type='button';del.textContent='この記録を削除';del.addEventListener('click',()=>{if(confirm('この記録を削除しますか？')){writeSaved(readSaved().filter(x=>x.id!==rec.id));renderSaved()}});div.append(h,p,p2,del);box.appendChild(div)})}
-$('save').addEventListener('click',()=>{try{const rec=record();const data=readSaved();data.push(rec);writeSaved(data);$('status').innerHTML='<span class="success">保存しました。</span>';renderSaved()}catch(e){$('status').innerHTML='<span class="warning">保存できませんでした。端末の空き容量などを確認してください。</span>'}});$('export').addEventListener('click',()=>{const blob=new Blob([JSON.stringify(readSaved(),null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='keiba-growth-data.json';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000)});$('import').addEventListener('change',async e=>{const f=e.target.files&&e.target.files[0];if(!f)return;try{const parsed=JSON.parse(await f.text());if(!Array.isArray(parsed))throw Error('format');writeSaved(readSaved().concat(parsed));$('status').textContent=parsed.length+'件の記録を読み込みました。';renderSaved()}catch(err){$('status').innerHTML='<span class="warning">読み込めませんでした。JSON形式のバックアップを選んでください。</span>'}e.target.value=''});renderSaved();
+function addRow(h='',a='',b=''){
+ const tr=document.createElement('tr'),vals=[h,a,b],labels=['相手馬番','1番人気から相手のオッズ','相手から1番人気のオッズ'];
+ vals.forEach((v,i)=>{const td=document.createElement('td'),inp=document.createElement('input');inp.type='number';inp.min='0';inp.step='0.1';inp.value=v;inp.setAttribute('aria-label',labels[i]);inp.placeholder=i?'オッズ':'馬番';td.appendChild(inp);tr.appendChild(td)});
+ const td=document.createElement('td'),btn=document.createElement('button');btn.type='button';btn.className='secondary';btn.textContent='削除';btn.style.padding='6px 8px';btn.addEventListener('click',()=>tr.remove());td.appendChild(btn);tr.appendChild(td);$('oddsBody').appendChild(tr)
+}
+for(let i=0;i<8;i++)addRow();
+$('addRow').addEventListener('click',()=>addRow());
+$('clearRows').addEventListener('click',()=>{$('oddsBody').innerHTML='';$('results').innerHTML='';lastCalc=null;addRow()});
+$('clearOcr').addEventListener('click',()=>{$('ocrText').value='';$('ocrProgress').textContent='読み取り結果を消しました。'});
+$('runOcr').addEventListener('click',async()=>{
+ if(ocrBusy)return;
+ if(!selectedFiles.length){$('ocrProgress').textContent='先に「写真を選ぶ」から写真を選択してください。';return}
+ if(!window.Tesseract){$('ocrProgress').textContent='OCRライブラリを読み込めませんでした。通信状態を確認し、ページを再読み込みしてください。';return}
+ ocrBusy=true;$('runOcr').disabled=true;$('ocrText').value='';
+ let worker;
+ try{
+  worker=await Tesseract.createWorker('jpn+eng',1,{logger:m=>{if(m.status){const pct=typeof m.progress==='number'?' '+Math.round(m.progress*100)+'%':'';$('ocrProgress').textContent='読み取り中：'+m.status+pct}}});
+  let combined='';
+  for(let i=0;i<selectedFiles.length;i++){
+   $('ocrProgress').textContent='写真 '+(i+1)+'/'+selectedFiles.length+' を読み取り中…';
+   const result=await worker.recognize(selectedFiles[i]);
+   combined+='【'+selectedFiles[i].name+'】\n'+((result.data&&result.data.text)||'（文字を認識できませんでした）')+'\n\n';
+   $('ocrText').value=combined;
+  }
+  $('ocrProgress').textContent='読み取り完了。馬番・オッズ以外の文字も含まれる場合があります。結果を確認してください。';
+ }catch(err){$('ocrProgress').textContent='読み取りに失敗しました。通信状態を確認して再試行してください。';$('ocrText').value=String(err&&err.message||err)}
+ finally{if(worker){try{await worker.terminate()}catch(e){}}ocrBusy=false;$('runOcr').disabled=false}
+});
+function calculate(){
+ const fav=Number($('favorite').value),threshold=Number($('threshold').value);
+ if(!fav||fav<1){$('results').innerHTML='<p class="warning">1番人気の馬番を入力してください。</p>';return null}
+ const all=Array.from($('oddsBody').querySelectorAll('tr')).map(tr=>Array.from(tr.querySelectorAll('input')).map(x=>x.value));
+ const seen=new Set(),rows=[];
+ all.forEach(v=>{if(v.some(x=>x===''))return;const horse=Number(v[0]),favTo=Number(v[1]),toFav=Number(v[2]);if(!horse||horse===fav||favTo<=0||toFav<=0||seen.has(horse))return;seen.add(horse);rows.push({horse,favTo,toFav,diff:Math.round((toFav-favTo)*100)/100})});
+ rows.sort((a,b)=>a.diff-b.diff);rows.forEach((r,i)=>r.gap=i?Math.round((r.diff-rows[i-1].diff)*100)/100:null);
+ const candidates=[];for(let i=0;i<rows.length-1;i++){const gap=Math.round((rows[i+1].diff-rows[i].diff)*100)/100;if(gap>=threshold)candidates.push({...rows[i],boundary:gap,nextHorse:rows[i+1].horse})}
+ lastCalc={favorite:fav,threshold,rows,candidates};
+ if(!rows.length){$('results').innerHTML='<p>計算できる行がありません。馬番と両方向のオッズを入力してください。</p>';return lastCalc}
+ let html='<h3>計算結果（差の小さい順）</h3><div class="table-wrap"><table><thead><tr><th>順位</th><th>馬番</th><th>1番人気→相手</th><th>相手→1番人気</th><th>差</th><th>前との差</th></tr></thead><tbody>';
+ rows.forEach((r,i)=>{const cand=candidates.some(c=>c.horse===r.horse);html+='<tr'+(cand?' style="background:#fef3c7"':'')+'><td>'+(i+1)+'</td><td><b>'+r.horse+'</b>'+(cand?' <span class="tag">穴候補</span>':'')+'</td><td>'+r.favTo+'</td><td>'+r.toFav+'</td><td><b>'+r.diff+'</b></td><td>'+(r.gap===null?'—':r.gap)+'</td></tr>'});
+ html+='</tbody></table></div>';
+ if(candidates.length){html+='<h3>境目の仮説穴馬候補</h3><ul>';candidates.forEach(c=>html+='<li><b>'+c.horse+'番</b>（差 '+c.diff+'）— 次の '+c.nextHorse+'番との境目：'+c.boundary+'</li>');html+='</ul><p class="hint">これは検証用の仮説候補で、好走を保証するものではありません。</p>'}else html+='<p class="hint">しきい値 '+threshold+' 以上の境目はありません。</p>';
+ $('results').innerHTML=html;return lastCalc
+}
+$('calculate').addEventListener('click',calculate);
+function readSaved(){try{return JSON.parse(localStorage.getItem('keibaGrowthV3')||'[]')}catch(e){return []}}
+function writeSaved(a){localStorage.setItem('keibaGrowthV3',JSON.stringify(a))}
+function record(){const calc=lastCalc||calculate();return{id:Date.now(),date:$('date').value,track:$('track').value,race:$('race').value,condition:$('condition').value,memo:$('memo').value,photoNames:photoNames.slice(),ocrText:$('ocrText').value,calculation:calc,savedAt:new Date().toISOString()}}
+function renderSaved(){
+ const box=$('savedList'),data=readSaved().sort((a,b)=>b.id-a.id);box.replaceChildren();
+ if(!data.length){box.innerHTML='<p class="hint">保存したレースはまだありません。</p>';return}
+ data.forEach(rec=>{const div=document.createElement('div');div.className='saved';const h=document.createElement('h3');h.textContent=(rec.date||'日付なし')+' · '+(rec.track||'')+' '+(rec.race||'');const p=document.createElement('p');p.textContent=(rec.condition||'条件なし')+' / 写真ファイル名 '+((rec.photoNames||[]).length)+'件';const p2=document.createElement('p');const cs=rec.calculation&&rec.calculation.candidates||[];p2.textContent='仮説穴馬候補：'+(cs.length?cs.map(c=>c.horse+'番（境目 '+c.boundary+'）').join('、'):'なし');const del=document.createElement('button');del.className='danger';del.type='button';del.textContent='この記録を削除';del.addEventListener('click',()=>{if(confirm('この記録を削除しますか？')){writeSaved(readSaved().filter(x=>x.id!==rec.id));renderSaved()}});div.append(h,p,p2,del);box.appendChild(div)})
+}
+$('save').addEventListener('click',()=>{try{const rec=record();const data=readSaved();data.push(rec);writeSaved(data);$('status').innerHTML='<span class="success">保存しました。</span>';renderSaved()}catch(e){$('status').innerHTML='<span class="warning">保存できませんでした。端末の空き容量などを確認してください。</span>'}});
+$('export').addEventListener('click',()=>{const blob=new Blob([JSON.stringify(readSaved(),null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='keiba-growth-data.json';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000)});
+$('import').addEventListener('change',async e=>{const f=e.target.files&&e.target.files[0];if(!f)return;try{const parsed=JSON.parse(await f.text());if(!Array.isArray(parsed))throw Error('format');writeSaved(readSaved().concat(parsed));$('status').textContent=parsed.length+'件の記録を読み込みました。';renderSaved()}catch(err){$('status').innerHTML='<span class="warning">読み込めませんでした。JSON形式のバックアップを選んでください。</span>'}e.target.value=''});
+renderSaved();
 })();
 </script>
 </body>
