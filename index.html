@@ -196,11 +196,25 @@ horseCtx.drawImage(
 
 );
 
-const horseResult = await Tesseract.recognize(
+let horseResult;
 
-  horseCanvas,
+const horseWorker = await Tesseract.createWorker('eng');
 
-  'eng'
+try {
+
+  await horseWorker.setParameters({
+
+    tessedit_char_whitelist: '0123456789'
+
+  });
+
+  horseResult = await horseWorker.recognize(horseCanvas);
+
+} finally {
+
+  await horseWorker.terminate();
+
+}
 
 );   
 outputs.push(`【写真${i+1}：${photos[i].file.name}】
