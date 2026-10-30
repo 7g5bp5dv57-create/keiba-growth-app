@@ -203,7 +203,15 @@ const horseResult = await Tesseract.recognize(
   'eng'
 
 );   
-   outputs.push(`【写真${i+1}：${photos[i].file.name}】\n${r.data.text||''}`);
+outputs.push(`【写真${i+1}：${photos[i].file.name}】
+
+【全体OCR】
+
+${r.data.text||''}
+
+【馬番欄OCR】
+
+${horseResult.data.text||''}`);
   }
   $('ocrText').value=outputs.join('\n\n--------------------\n\n');$('ocrStatus').textContent='OCRが終わりました。読み取った数字を確認し、馬番・オッズ表へ手入力してください。';
  }catch(e){$('ocrStatus').textContent='OCRに失敗しました。通信状態を確認して再試行してください。詳細：'+(e.message||e)}
