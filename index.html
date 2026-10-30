@@ -170,7 +170,39 @@ const r = await Tesseract.recognize(
 
 );
 
-   
+const horseCanvas = document.createElement('canvas');
+
+horseCanvas.width = Math.round(canvas.width * 0.5);
+
+horseCanvas.height = canvas.height;
+
+const horseCtx = horseCanvas.getContext('2d');
+
+horseCtx.drawImage(
+
+  canvas,
+
+  0, 0,
+
+  horseCanvas.width,
+
+  horseCanvas.height,
+
+  0, 0,
+
+  horseCanvas.width,
+
+  horseCanvas.height
+
+);
+
+const horseResult = await Tesseract.recognize(
+
+  horseCanvas,
+
+  'eng'
+
+);   
    outputs.push(`【写真${i+1}：${photos[i].file.name}】\n${r.data.text||''}`);
   }
   $('ocrText').value=outputs.join('\n\n--------------------\n\n');$('ocrStatus').textContent='OCRが終わりました。読み取った数字を確認し、馬番・オッズ表へ手入力してください。';
