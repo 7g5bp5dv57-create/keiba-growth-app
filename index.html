@@ -118,6 +118,7 @@ $('photoInput').addEventListener('change',e=>{
 function renderPhotos(){$('photos').innerHTML='';photos.forEach((p,i)=>{const d=document.createElement('div');d.className='photo';const img=document.createElement('img');img.src=p.url;img.alt='選択した写真 '+(i+1);const label=document.createElement('div');label.className='muted';label.textContent=`写真 ${i+1}：${p.file.name}`;const b=document.createElement('button');b.className='danger';b.textContent='この写真を削除';b.onclick=()=>{URL.revokeObjectURL(p.url);photos=photos.filter(x=>x.id!==p.id);renderPhotos()};d.append(img,label,b);$('photos').append(d)})}
 $('clearPhotos').onclick=()=>{photos.forEach(p=>URL.revokeObjectURL(p.url));photos=[];renderPhotos();$('ocrText').value='';$('ocrStatus').textContent='写真を削除しました。'};
 $('ocrAll').onclick=async()=>{
+alert('OCRボタンは反応しています');
  if(!photos.length){$('ocrStatus').textContent='先に写真を選択してください。';return}
  if(!window.Tesseract){$('ocrStatus').textContent='OCRエンジンを読み込めません。通信状態を確認してページを再読み込みしてください。';return}
  $('ocrAll').disabled=true;let outputs=[];
