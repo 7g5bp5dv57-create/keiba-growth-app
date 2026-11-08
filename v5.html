@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+
+<html lang="ja">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<meta name="theme-color" content="#111827">
+
+<title>競馬データ成長アプリ 第5版</title>
+
+<style>
+
+*{box-sizing:border-box}
+
+body{
+
+  margin:0;
+
+  padding:18px;
+
+  font-family:-apple-system,BlinkMacSystemFont,sans-serif;
+
+  background:#111827;
+
+  color:#fff;
+
+}
+
+header{
+
+  text-align:center;
+
+  padding:22px 10px;
+
+}
+
+header h1{
+
+  font-size:25px;
+
+  margin:5px 0;
+
+}
+
+header p{
+
+  color:#aab6ca;
+
+  font-size:13px;
+
+}
+
+.version{
+
+  display:inline-block;
+
+  background:#2563eb;
+
+  padding:6px 14px;
+
+  border-radius:20px;
+
+  font-size:12px;
+
+}
+
+h2{
+
+  font-size:18px;
+
+  margin:22px 0 12px;
+
+}
+
+.grid{
+
+  display:grid;
+
+  grid-template-columns:1fr 1fr;
+
+  gap:12px;
+
+}
+
+.card{
+
+  background:#1f2937;
+
+  border:1px solid #374151;
+
+  border-radius:14px;
+
+  padding:17px 12px;
+
+  min-height:130px;
+
+  text-align:left;
+
+  color:white;
+
+  cursor:pointer;
+
+}
+
+.card:active{background:#374151}
+
+.card .number{
+
+  color:#60a5fa;
+
+  font-size:12px;
+
+}
+
+.card h3{
+
+  font-size:16px;
+
+  margin:10px 0 7px;
+
+}
+
+.card p{
+
+  color:#b8c3d4;
+
+  font-size:12px;
+
+  line-height:1.6;
+
+  margin:0;
+
+}
+
+.panel{
+
+  display:none;
+
+  margin-top:18px;
+
+  padding:18px;
+
+  background:#1f2937;
+
+  border:1px solid #475569;
+
+  border-radius:14px;
+
+}
+
+.panel h2{margin-top:0}
+
+.panel p{
+
+  color:#d1d5db;
+
+  line-height:1.8;
+
+}
+
+.back{
+
+  border:0;
+
+  border-radius:9px;
+
+  padding:12px 18px;
+
+  background:#475569;
+
+  color:white;
+
+  font-size:14px;
+
+}
+
+.notice{
+
+  margin-top:22px;
+
+  padding:14px;
+
+  border-radius:12px;
+
+  background:#172554;
+
+  color:#bfdbfe;
+
+  font-size:12px;
+
+  line-height:1.7;
+
+}
+
+footer{
+
+  text-align:center;
+
+  color:#64748b;
+
+  font-size:11px;
+
+  padding:25px 0 10px;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+  <span class="version">KEIBA DATA PROJECT</span>
+
+  <h1>競馬データ成長アプリ</h1>
+
+  <p>データを集めて、分析して、予想の精度を高める</p>
+
+  <strong>第5版</strong>
+
+</header>
+
+<h2>分析メニュー</h2>
+
+<div class="grid">
+
+<button class="card" onclick="openPanel(1)">
+
+  <span class="number">01</span>
+
+  <h3>出走表読み込み</h3>
+
+  <p>出走馬・馬番・騎手などの情報を取り込む</p>
+
+</button>
+
+<button class="card" onclick="openPanel(2)">
+
+  <span class="number">02</span>
+
+  <h3>総合能力分析</h3>
+
+  <p>馬場・距離・競馬場・実績を比較する</p>
+
+</button>
+
+<button class="card" onclick="openPanel(3)">
+
+  <span class="number">03</span>
+
+  <h3>展開予測</h3>
+
+  <p>逃げ・先行・差し・追込の展開を分析する</p>
+
+</button>
+
+<button class="card" onclick="openPanel(4)">
+
+  <span class="number">04</span>
+
+  <h3>穴馬発見</h3>
+
+  <p>馬単オッズの差と境目から穴馬候補を探す</p>
+
+</button>
+
+<button class="card" onclick="openPanel(5)">
+
+  <span class="number">05</span>
+
+  <h3>AI総合予想</h3>
+
+  <p>各分析結果をまとめて予想候補を出す</p>
+
+</button>
+
+<button class="card" onclick="openPanel(6)">
+
+  <span class="number">06</span>
+
+  <h3>データ蓄積・検証</h3>
+
+  <p>レース結果を保存して的中率などを調べる</p>
+
+</button>
+
+</div>
+
+<div id="panel" class="panel">
+
+  <h2 id="panelTitle"></h2>
+
+  <p id="panelText"></p>
+
+  <button class="back" onclick="closePanel()">メニューに戻る</button>
+
+</div>
+
+<div class="notice">
+
+  <strong>第5版 開発方針</strong><br>
+
+  第4版の機能と保存データはそのまま残します。<br>
+
+  新しい分析機能を一つずつ追加していきます。
+
+</div>
+
+<footer>
+
+  KEIBA DATA GROWTH APP / VERSION 5
+
+</footer>
+
+<script>
+
+const modules = {
+
+  1:["出走表読み込み","出走表の写真やデータから、馬番・馬名・騎手などを取り込む機能を作ります。"],
+
+  2:["総合能力分析","競馬場適性、距離適性、馬場適性、過去実績などを比較する機能を作ります。"],
+
+  3:["展開予測","逃げ馬・先行馬・差し馬などを整理し、レース展開を予測する機能を作ります。"],
+
+  4:["穴馬発見","正式な計算式「相手→1番人気 − 1番人気→相手」でオッズ差を計算し、境目から穴馬候補を探します。"],
+
+  5:["AI総合予想","能力分析・展開予測・穴馬分析を組み合わせる機能を作ります。"],
+
+  6:["データ蓄積・検証","レース結果を記録し、過去の予想と比較して成績を検証する機能を作ります。"]
+
+};
+
+function openPanel(n){
+
+  document.getElementById("panelTitle").textContent=modules[n][0];
+
+  document.getElementById("panelText").textContent=modules[n][1]+" 現在は開発準備中です。";
+
+  document.getElementById("panel").style.display="block";
+
+  document.getElementById("panel").scrollIntoView({behavior:"smooth"});
+
+}
+
+function closePanel(){
+
+  document.getElementById("panel").style.display="none";
+
+}
+
+</script>
+
+</body>
+
+</html>
