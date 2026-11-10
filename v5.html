@@ -447,24 +447,7 @@ function addEntryHorse(){
 
   entryHorses.push({number,name,jockey});
 
-  renderEntryHorses();
-
-  document.getElementById("entryNumber").value = "";
-
-  document.getElementById("entryName").value = "";
-
-  document.getElementById("entryJockey").value = "";
-
-}
-
-function saveEntryHorses(){
-
-  localStorage.setItem("keibaGrowthV5Entries",JSON.stringify(entryHorses));
-
-  document.getElementById("entryStatus").textContent = "出走表を保存しました";
-
-}
-
+　
 document.getElementById("entryPhoto").addEventListener("change",function(){
 
   const preview = document.getElementById("entryPreview");
