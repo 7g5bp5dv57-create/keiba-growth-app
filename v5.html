@@ -354,8 +354,117 @@ function closePanel(){
 
 }
 
+
+
 </script>
 
+<section id="entrySection" style="margin-top:20px;padding:18px;background:#1f2937;border-radius:14px;border:1px solid #475569;color:white;">
+
+  <h2>出走表読み込み</h2>
+
+  <p>出走表の写真を選択して、出走馬を登録できます。</p>
+
+  <input type="file" id="entryPhoto" accept="image/*" multiple style="width:100%;margin:12px 0;color:white;">
+
+  <div id="entryPreview"></div>
+
+  <h3>出走馬の登録</h3>
+
+  <input id="entryNumber" type="number" placeholder="馬番" style="width:100%;padding:12px;margin:5px 0;">
+
+  <input id="entryName" placeholder="馬名" style="width:100%;padding:12px;margin:5px 0;">
+
+  <input id="entryJockey" placeholder="騎手名" style="width:100%;padding:12px;margin:5px 0;">
+
+  <button onclick="addEntryHorse()" style="padding:12px;margin:8px 0;background:#2563eb;color:white;border:0;border-radius:8px;">出走馬を追加</button>
+
+  <div id="entryList"></div>
+
+  <button onclick="saveEntryHorses()" style="padding:12px;margin-top:12px;background:#059669;color:white;border:0;border-radius:8px;">出走表を保存</button>
+
+  <p id="entryStatus" style="color:#93c5fd;"></p>
+
+</section>
+
+<script>
+
+let entryHorses = JSON.parse(localStorage.getItem("keibaGrowthV5Entries") || "[]");
+
+function renderEntryHorses(){
+
+  document.getElementById("entryList").innerHTML = entryHorses.map((h,i) =>
+
+    `<p>${h.number}番 ${h.name}（${h.jockey}）</p>`
+
+  ).join("");
+
+}
+
+function addEntryHorse(){
+
+  const number = document.getElementById("entryNumber").value;
+
+  const name = document.getElementById("entryName").value.trim();
+
+  const jockey = document.getElementById("entryJockey").value.trim();
+
+  if(!number || !name){
+
+    alert("馬番と馬名を入力してください");
+
+    return;
+
+  }
+
+  entryHorses.push({number,name,jockey});
+
+  renderEntryHorses();
+
+  document.getElementById("entryNumber").value = "";
+
+  document.getElementById("entryName").value = "";
+
+  document.getElementById("entryJockey").value = "";
+
+}
+
+function saveEntryHorses(){
+
+  localStorage.setItem("keibaGrowthV5Entries",JSON.stringify(entryHorses));
+
+  document.getElementById("entryStatus").textContent = "出走表を保存しました";
+
+}
+
+document.getElementById("entryPhoto").addEventListener("change",function(){
+
+  const preview = document.getElementById("entryPreview");
+
+  preview.innerHTML = "";
+
+  Array.from(this.files).forEach(file=>{
+
+    const img = document.createElement("img");
+
+    img.src = URL.createObjectURL(file);
+
+    img.style.width = "100%";
+
+    img.style.marginTop = "10px";
+
+    img.style.borderRadius = "8px";
+
+    preview.appendChild(img);
+
+  });
+
+});
+
+renderEntryHorses();
+
+</script>
+　
 </body>
 
 </html>
+
