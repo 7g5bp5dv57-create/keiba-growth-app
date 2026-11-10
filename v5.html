@@ -394,6 +394,35 @@ function renderEntryHorses(){
 
   document.getElementById("entryList").innerHTML = entryHorses.map((h,i) =>
 
+    `<p style="padding:10px;background:#374151;border-radius:8px;">
+
+      ${h.number}番 ${h.name}（${h.jockey}）
+
+      <button onclick="removeEntryHorse(${i})"
+
+      style="margin-left:10px;background:#dc2626;color:white;border:0;padding:6px 12px;border-radius:6px;">
+
+      削除
+
+      </button>
+
+    </p>`
+
+  ).join("");
+
+}
+
+function removeEntryHorse(index){
+
+  if(!confirm("この馬を削除しますか？")) return;
+
+  entryHorses.splice(index,1);
+
+  renderEntryHorses();
+
+}
+  document.getElementById("entryList").innerHTML = entryHorses.map((h,i) =>
+
     `<p>${h.number}番 ${h.name}（${h.jockey}）</p>`
 
   ).join("");
