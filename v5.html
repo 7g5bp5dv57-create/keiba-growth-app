@@ -484,7 +484,197 @@ document.getElementById("entryPhoto").addEventListener("change",function(){
 renderEntryHorses();
 
 </script>
-　
+
+
+<section id="abilitySection" style="margin-top:20px;padding:18px;background:#1f2937;border:1px solid #475569;border-radius:14px;color:white;">
+
+  <h2>総合能力分析</h2>
+
+  <p>出走馬ごとに各適性を0〜10点で評価します。</p>
+
+  <label>分析する馬</label>
+
+  <select id="abilityHorse" style="width:100%;padding:12px;margin:8px 0;">
+
+    <option value="">出走馬を選択</option>
+
+  </select>
+
+  <div id="abilityInputs"></div>
+
+  <button onclick="saveAbilityData()" style="padding:12px;margin-top:12px;background:#2563eb;color:white;border:0;border-radius:8px;">
+
+    能力データを保存
+
+  </button>
+
+  <p id="abilityStatus" style="color:#93c5fd;"></p>
+
+  <h3>総合能力ランキング</h3>
+
+  <div id="abilityRanking"></div>
+
+</section>
+
+<script>
+
+const abilityFields = [
+
+  "競馬場適性",
+
+  "距離適性",
+
+  "芝・ダート適性",
+
+  "馬場適性",
+
+  "過去実績",
+
+  "騎手相性"
+
+];
+
+let abilityData = JSON.parse(
+
+  localStorage.getItem("keibaGrowthV5Ability") || "{}"
+
+);
+
+document.getElementById("abilityInputs").innerHTML =
+
+  abilityFields.map((name,i) => `
+
+    <label>${name}（0〜10点）</label>
+
+    <input type="number" id="ability${i}" min="0" max="10" value="5"
+
+      style="width:100%;padding:12px;margin:6px 0 12px;">
+
+  `).join("");
+
+function updateAbilityHorses(){
+
+  const select = document.getElementById("abilityHorse");
+
+  const current = select.value;
+
+  select.innerHTML = '<option value="">出走馬を選択</option>';
+
+  entryHorses.forEach((h,i) => {
+
+    const option = document.createElement("option");
+
+    option.value = i;
+
+    option.textContent = h.number + "番 " + h.name;
+
+    select.appendChild(option);
+
+  });
+
+  if(current !== "" && entryHorses[current]){
+
+    select.value = current;
+
+  }
+
+}
+
+function saveAbilityData(){
+
+  const index = document.getElementById("abilityHorse").value;
+
+  if(index === "" || !entryHorses[index]){
+
+    alert("先に分析する馬を選択してください");
+
+    return;
+
+  }
+
+  const horse = entryHorses[index];
+
+  const scores = [];
+
+  for(let i=0;i<6;i++){
+
+    const value = Number(document.getElementById("ability"+i).value);
+
+    if(!Number.isFinite(value) || value < 0 || value > 10){
+
+      alert("点数は0〜10で入力してください");
+
+      return;
+
+    }
+
+    scores.push(value);
+
+  }
+
+  const total = scores.reduce((a,b)=>a+b,0);
+
+  abilityData[String(horse.number)] = {
+
+    number: horse.number,
+
+    name: horse.name,
+
+    jockey: horse.jockey,
+
+    scores: scores,
+
+    total: total
+
+  };
+
+  localStorage.setItem(
+
+    "keibaGrowthV5Ability",
+
+    JSON.stringify(abilityData)
+
+  );
+
+  document.getElementById("abilityStatus").textContent =
+
+    horse.name + " の能力データを保存しました";
+
+  renderAbilityRanking();
+
+}
+
+function renderAbilityRanking(){
+
+  const list = Object.values(abilityData)
+
+    .sort((a,b)=>b.total-a.total);
+
+  document.getElementById("abilityRanking").innerHTML =
+
+    list.length
+
+    ? list.map((h,i)=>`
+
+        <p style="padding:10px;background:#374151;border-radius:8px;">
+
+          ${i+1}位　${h.number}番 ${h.name}
+
+          <br>総合点：${h.total} / 60点
+
+        </p>
+
+      `).join("")
+
+    : "まだ分析データがありません";
+
+}
+
+updateAbilityHorses();
+
+renderAbilityRanking();
+
+</script>　
 </body>
 
 </html>
